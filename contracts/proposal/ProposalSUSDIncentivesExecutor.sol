@@ -15,7 +15,7 @@ import {IATokenDetailed} from '../interfaces/IATokenDetailed.sol';
 import {PercentageMath} from '../utils/PercentageMath.sol';
 import {SafeMath} from '../lib/SafeMath.sol';
 
-contract ProposalIncentivesExecutor is IProposalIncentivesExecutor {
+contract ProposalSUSDIncentivesExecutor is IProposalIncentivesExecutor {
   using SafeMath for uint256;
   using PercentageMath for uint256;
 
@@ -31,38 +31,20 @@ contract ProposalIncentivesExecutor is IProposalIncentivesExecutor {
   uint256 constant DISTRIBUTION_AMOUNT = 198000000000000000000000; // 198000 AAVE during 90 days
 
   function execute(
-    address[6] memory aTokenImplementations,
-    address[6] memory variableDebtImplementations
+    address[1] memory aTokenImplementations,
+    address[1] memory variableDebtImplementations
   ) external override {
     uint256 tokensCounter;
 
-    address[] memory assets = new address[](12);
+    address[] memory assets = new address[](2);
 
-    // Reserves Order: DAI/GUSD/USDC/USDT/WBTC/WETH
-    address payable[6] memory reserves =
-      [
-        0x6B175474E89094C44Da98b954EedeAC495271d0F,
-        0x056Fd409E1d7A124BD7017459dFEa2F387b6d5Cd,
-        0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48,
-        0xdAC17F958D2ee523a2206206994597C13D831ec7,
-        0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599,
-        0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
-      ];
+    // Reserves Order: sUSD
+    address payable[1] memory reserves = [0x57Ab1ec28D129707052df4dF418D58a2D46d5f51];
 
-    uint256[] memory emissions = new uint256[](12);
+    uint256[] memory emissions = new uint256[](2);
 
-    emissions[0] = 1706018518518520; //aDAI
-    emissions[1] = 1706018518518520; //vDebtDAI
-    emissions[2] = 92939814814815; //aGUSD
-    emissions[3] = 92939814814815; //vDebtGUSD
-    emissions[4] = 5291203703703700; //aUSDC
-    emissions[5] = 5291203703703700; //vDebtUSDC
-    emissions[6] = 3293634259259260; //aUSDT
-    emissions[7] = 3293634259259260; //vDebtUSDT
-    emissions[8] = 1995659722222220; //aWBTC
-    emissions[9] = 105034722222222; //vDebtWBTC
-    emissions[10] = 2464942129629630; //aETH
-    emissions[11] = 129733796296296; //vDebtWETH
+    emissions[0] = 92939814814815; //aGUSD
+    emissions[1] = 92939814814815; //vDebtGUSD
 
     ILendingPoolConfigurator poolConfigurator = ILendingPoolConfigurator(POOL_CONFIGURATOR);
     IAaveIncentivesController incentivesController =
