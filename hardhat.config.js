@@ -20,7 +20,7 @@ task("propose", "Proposes the incentive proposal to AAVE Governance").setAction(
     const deployedAaveGovernanceAddress =
       "0xEC568fffba86c094cf06b22134B23074DFE2252c";
 
-    const Gov = await ethers.getContractFactory("Executor");
+    const Gov = await ethers.getContractFactory("AaveGovernanceV2");
     const govContract = await Gov.attach(deployedAaveGovernanceAddress);
 
     const ipfsEncoded =
@@ -29,16 +29,26 @@ task("propose", "Proposes the incentive proposal to AAVE Governance").setAction(
     const shortExecutor = "0xee56e2b3d491590b5b31738cc34d5232f378a8d5";
 
     const ProposalIncentivesExecutor = await ethers.getContractFactory(
-      "ProposalIncentivesExecutor"
+      "ProposalSUSDIncentivesExecutor"
     );
     const proposalIncentivesExecutor = await ProposalIncentivesExecutor.connect(
       deployer
     ).deploy();
 
+    /*
+      IExecutorWithTimelock executor,
+      address[] memory targets,
+      uint256[] memory values,
+      string[] memory signatures,
+      bytes[] memory calldatas,
+      bool[] memory withDelegatecalls,
+      bytes32 ipfsHash
+    */
+
     try {
       const tx = await govContract.create(
         shortExecutor,
-        [proposalIncentivesExecutor],
+        [proposalIncentivesExecutor.address],
         ["0"],
         [executeSignature],
         [callData],
@@ -49,7 +59,7 @@ task("propose", "Proposes the incentive proposal to AAVE Governance").setAction(
       console.log("- Proposal submitted to Governance");
       await tx.wait();
     } catch (error) {
-      console.log(error);
+      console.log(error.messsage);
       throw error;
     }
 
