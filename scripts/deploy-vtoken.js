@@ -13,46 +13,36 @@ async function main() {
   // manually to make sure everything is compiled
   // await hre.run('compile');
 
-  const [deployer] = await hre.ethers.getSigners();
+  const [deployer] = await ethers.getSigners();
 
-  const [
-    pool,
-    asset,
-    treasury,
-    tokenName,
-    tokenSymbol,
-    incentivesController,
-  ] = [
+  const [pool, asset, tokenName, tokenSymbol, incentivesController] = [
     "0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9",
     "0x57ab1ec28d129707052df4df418d58a2d46d5f51",
-    "0x464C71f6c2F760DdA6093dCB91C24c39e5d6e18c",
-    "Aave interest bearing SUSD",
-    "aSUSD",
+    "Aave variable debt bearing SUSD",
+    "variableDebtSUSD",
     "0xd784927Ff2f95ba542BfC824c8a8a98F3495f6b5",
   ];
 
-  const AToken = await ethers.getContractFactory("AToken");
+  const VToken = await ethers.getContractFactory("VariableDebtToken");
 
-  const aToken = await AToken.connect(deployer).deploy(
+  const vToken = await VToken.connect(deployer).deploy(
     pool,
     asset,
-    treasury,
     tokenName,
     tokenSymbol,
     incentivesController
   );
 
-  await aToken.deployed();
+  await vToken.deployed();
 
-  return aToken.address;
+  return vToken.address;
 }
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main()
   .then((response) => {
-    console.log(`Aave Interest Bearing sUSD is deployed at ${response}`);
-
+    console.log(`Variable Debt sUSD is deployed at ${response}`);
     process.exit(0);
   })
   .catch((error) => {
